@@ -1,0 +1,41 @@
+:root {
+  --fg: #1f2328; --muted: #59636e; --bg: #f6f8fa; --card: #fff; --line: #d1d9e0;
+  --accent: #0969da; --good: #1a7f37; --bad: #cf222e; --meh: #9a6700;
+  font-family: system-ui, "Segoe UI", Roboto, sans-serif; color: var(--fg); background: var(--bg);
+}
+@media (prefers-color-scheme: dark) {
+  :root { --fg: #e6edf3; --muted: #9198a1; --bg: #0d1117; --card: #151b23; --line: #3d444d;
+    --accent: #4493f8; --good: #3fb950; --bad: #f85149; --meh: #d29922; }
+}
+body { margin: 0; line-height: 1.5; }
+main { max-width: 760px; margin: 0 auto; padding: 24px 16px 48px; }
+h1 { margin: 0 0 8px; font-size: 1.9rem; }
+h2 { margin: 0 0 12px; font-size: 1.2rem; }
+.lede { font-size: 1.05rem; margin: 0 0 4px; }
+.small { color: var(--muted); font-size: .88rem; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; margin: 16px 0; }
+.card.warn { border-color: var(--bad); }
+.card.info { background: transparent; }
+.num { display: inline-grid; place-items: center; width: 1.6em; height: 1.6em; border-radius: 50%;
+  background: var(--accent); color: #fff; font-size: .85em; margin-right: 6px; }
+.checklist { padding-left: 1.2em; }
+.checklist li { margin: 4px 0; }
+.limit { display: block; margin: 12px 0; }
+.limit input { width: 6em; padding: 4px 6px; font: inherit; }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 10px 0; }
+button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid var(--line);
+  background: var(--card); color: var(--fg); cursor: pointer; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+button:disabled { opacity: .5; cursor: default; }
+progress { width: 100%; height: 14px; }
+.status { font-variant-numeric: tabular-nums; }
+.error { color: var(--bad); }
+.resume { border: 1px dashed var(--accent); border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; }
+pre { white-space: pre-wrap; background: var(--bg); padding: 12px; border-radius: 6px; font-size: .86rem; }
+#verdict.PASS { color: var(--good); } #verdict.PASS_PARTIAL { color: var(--meh); }
+#verdict.FAKE, #verdict.FAIL { color: var(--bad); } #verdict.INCOMPLETE { color: var(--muted); }
+footer { margin-top: 24px; }
+.demo-buttons { display: grid; gap: 8px; }
+.demo-buttons button { text-align: left; }
+.demo-tag { display: inline-block; background: var(--meh); color: #fff; border-radius: 4px; padding: 0 6px;
+  font-size: .75rem; vertical-align: middle; margin-left: 6px; }

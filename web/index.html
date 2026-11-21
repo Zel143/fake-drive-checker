@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fake Drive Checker: is your USB drive lying about its size?</title>
+  <meta name="description" content="Free, in-browser test that catches USB flash drives, SD cards and external SSDs with fake capacity. Nothing is uploaded.">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Fake Drive Checker</h1>
+    <p class="lede">Cheap "2 TB" flash drives and "20 TB" SSDs often hold only a few GB. Everything you save
+      past the real size silently disappears. This test writes data to the whole drive and checks that it all
+      comes back.</p>
+    <p class="small">Runs entirely in your browser. Nothing is uploaded.</p>
+  </header>
+
+  <div id="unsupported" class="card warn" hidden>
+    <h2>This browser can't run the test</h2>
+    <p>The test needs to write files to a drive you pick, which only <b>Chrome</b> and <b>Edge</b> on a
+      desktop or laptop can do (not Firefox, Safari or phones). Open this page in one of those, or use the
+      <a href="#desktop">desktop app</a>.</p>
+    <p id="unsupported-why"></p>
+  </div>
+
+  <!-- step 1 -->
+  <section id="step-pick" class="card">
+    <div id="resume" class="resume" hidden>
+      <p><b>You have a test waiting to be read back.</b> <span id="resume-info"></span></p>
+      <button id="resume-go" class="primary">Continue to read-back</button>
+      <button id="resume-drop">Discard it</button>
+    </div>
+    <h2><span class="num">1</span> Pick the drive</h2>
+    <ul class="checklist">
+      <li><b>Back up anything on the drive first.</b> On a fake drive, the test can overwrite files that are already on it.</li>
+      <li>Plug it <b>straight into the computer</b>, not through a hub.</li>
+      <li>It takes a while: writing runs at the drive's speed (fakes often do 5–10 MB/s, about 30 min per 10 GB). Keep this tab open.</li>
+    </ul>
+    <label class="limit">Stop after <input id="limit" type="number" min="1" step="1" placeholder="all"> GB
+      <span class="small">(blank = fill the whole drive. For a huge claimed size, 64 GB is usually enough to catch a fake.)</span></label>
+    <div class="row">
+      <button id="pick" class="primary">Choose the drive…</button>
+      <span id="picked" class="small"></span>
+    </div>
+    <button id="start" class="primary" disabled>Start writing</button>
+  </section>
+
+  <section id="demo" class="card">
+    <h2>No drive handy? Watch a demo</h2>
+    <p class="small">Runs the real test against a simulated drive in memory. Works in any browser and touches no disk.</p>
+    <div id="demo-buttons" class="demo-buttons"></div>
+  </section>
+
+  <!-- step 2 -->
+  <section id="step-write" class="card" hidden>
+    <h2><span class="num">2</span> Writing test data</h2>
+    <progress id="write-bar"></progress>
+    <p id="write-status" class="status"></p>
+    <button id="write-stop">Stop writing (test what's written so far)</button>
+  </section>
+
+  <!-- step 3 -->
+  <section id="step-replug" class="card" hidden>
+    <h2><span class="num">3</span> Eject and replug the drive</h2>
+    <p id="write-summary"></p>
+    <p>This empties the computer's memory of what was just written, so the next step reads from the drive itself.
+      <b>Skipping it can make a fake drive pass.</b></p>
+    <ol>
+      <li>Eject it safely: right-click the drive in File Explorer and choose <b>Eject</b> (on a Mac, drag it to the Trash).</li>
+      <li>Unplug it and wait 5 seconds.</li>
+      <li>Plug it back in.</li>
+    </ol>
+    <button id="repick" class="primary">I've replugged it. Choose the drive again…</button>
+    <p id="repick-error" class="error"></p>
+  </section>
+
+  <!-- step 4 -->
+  <section id="step-verify" class="card" hidden>
+    <h2><span class="num">4</span> Reading everything back</h2>
+    <progress id="verify-bar" value="0" max="1"></progress>
+    <p id="verify-status" class="status"></p>
+    <button id="verify-stop">Stop</button>
+  </section>
+
+  <!-- step 5 -->
+  <section id="step-result" class="card" hidden>
+    <h2 id="verdict"></h2>
+    <pre id="summary"></pre>
+    <div class="row">
+      <button id="download" class="primary">Download report</button>
+      <button id="cleanup">Delete the test files from the drive</button>
+      <button id="again">Test another drive</button>
+    </div>
+    <p id="cleanup-status" class="small"></p>
+  </section>
+
+  <section class="card info" id="how">
+    <h2>How it works</h2>
+    <p>The page fills the drive with 64 MB files of unique, checkable data. Every 4 KB piece is stamped with
+      its own position. After the replug it reads everything back. Good drives return every byte. Fakes give
+      themselves away: past the real capacity the data comes back as zeros or blanks, or the drive "wraps
+      around" and quietly overwrites its own beginning. The stamps show which one happened and where it starts.</p>
+    <p>The page can't see the drive's hardware IDs or its claimed size, and it needs the replug step because
+      browsers can't skip the file cache.</p>
+  </section>
+
+  <section class="card info" id="desktop">
+    <h2>Desktop app (Windows)</h2>
+    <p>The desktop version does more: it reads the drive's USB ID and flags known counterfeit chips, needs no
+      replug (it reads straight from the device), and stops early when it detects a fake instead of filling a
+      "20 TB" drive. It's a small Python app, source on
+      <a href="https://github.com/Zel143/fake-drive-checker">GitHub</a>: <code>py -m fakecheck</code>.</p>
+  </section>
+
+  <footer class="small">No warranty. Testing only writes into a new <code>fakecheck-test</code> folder, but
+    a counterfeit drive can corrupt anything stored on it. That's why you back up first.</footer>
+</main>
+</body>
+</html>
